@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel administrador | El Jardinero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navegación administrador">
+      <a class="brand" href="index.html" aria-label="Ir al inicio">
+        <img class="brand-mark" src="logo.png" alt="Logo El Jardinero">
+        <span>El Jardinero Admin</span>
+      </a>
+      <button id="logout-btn" class="btn btn-outline hidden" type="button">Cerrar sesión</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="login-section" class="section admin-login-section">
+      <div class="admin-login">
+        <p class="eyebrow">Panel privado</p>
+        <h2>Acceso administrador</h2>
+        <p>Ingresa con la cuenta creada en Firebase Authentication.</p>
+        <form id="login-form" class="contact-form" novalidate>
+          <label for="admin-correo">Correo</label>
+          <input type="email" id="admin-correo" placeholder="correo@ejemplo.com" required>
+
+          <label for="admin-clave">Clave</label>
+          <input type="password" id="admin-clave" required>
+
+          <button class="btn btn-primary" type="submit">Ingresar</button>
+          <p id="login-error" class="form-message error hidden"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="panel-section" class="section hidden">
+      <div class="section-heading">
+        <p class="eyebrow">Solicitudes de cotización</p>
+        <h2>Panel de cotizaciones</h2>
+        <p>Responde por WhatsApp y marca cada solicitud como contactada.</p>
+      </div>
+
+      <p id="panel-empty" class="service-empty hidden">Todavía no hay solicitudes registradas.</p>
+
+      <div id="solicitudes-grid" class="solicitud-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 El Jardinero · Panel interno</p>
+  </footer>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

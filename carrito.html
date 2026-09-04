@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Solicitar cotización | El Jardinero</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <nav class="navbar">
+
+    <a class="brand" href="index.html">
+      <img class="brand-mark" src="logo.png" alt="El Jardinero">
+      <span>El Jardinero</span>
+    </a>
+
+    <a class="btn btn-outline" href="index.html#servicios">
+      ← Seguir eligiendo
+    </a>
+
+  </nav>
+</header>
+
+
+<main class="section checkout-page">
+
+  <div class="section-heading checkout-heading">
+    <p class="eyebrow">Resumen de tu solicitud</p>
+    <h2>🛒 Solicitud de cotización</h2>
+    <p>Elige fecha y horario de visita técnica para cada servicio. El precio final se confirma en el sitio.</p>
+  </div>
+
+
+  <div class="checkout-shell">
+
+    <section>
+
+      <div id="cart-items" class="checkout-items"></div>
+
+      <div id="cart-empty" class="cart-empty hidden">
+        Todavía no has agregado servicios.
+        <a href="index.html#servicios">
+          <strong>Ver servicios</strong>
+        </a>
+      </div>
+
+    </section>
+
+
+    <aside class="order-summary-panel">
+
+      <h3>Datos de contacto</h3>
+
+      <form id="checkout-form" class="checkout-form">
+
+        <label for="nombre">Nombre completo</label>
+        <input
+          id="nombre"
+          type="text"
+          required
+          minlength="2"
+          placeholder="Ej. Ana Torres">
+
+
+        <label for="correo">Correo electrónico</label>
+        <input
+          id="correo"
+          type="email"
+          required
+          placeholder="correo@ejemplo.com">
+
+
+        <label for="telefono">Teléfono / WhatsApp</label>
+        <input
+          id="telefono"
+          type="tel"
+          required
+          minlength="7"
+          placeholder="0991234567">
+
+
+        <label for="direccion">Dirección del jardín</label>
+        <input
+          id="direccion"
+          type="text"
+          required
+          minlength="4"
+          placeholder="Sector, calle y referencia">
+
+
+        <label for="metodo-pago">Método de pago preferido</label>
+
+        <select id="metodo-pago" required>
+          <option value="">Seleccione una opción</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="transferencia">Transferencia bancaria</option>
+          <option value="tarjeta">Tarjeta</option>
+        </select>
+
+        <div id="payment-panel" class="payment-panel hidden"></div>
+
+      </form>
+
+
+      <div class="summary-lines">
+
+        <div>
+          <span>Servicios seleccionados</span>
+          <strong id="sum-count">0</strong>
+        </div>
+
+      </div>
+
+
+      <div class="grand-total-row">
+        <span>Total estimado</span>
+        <strong id="cart-total">$0.00</strong>
+      </div>
+
+
+      <p class="cart-note">
+        Los valores son referenciales. El precio final se confirma en la visita técnica.
+      </p>
+
+
+      <button
+        id="checkout-btn"
+        class="btn btn-whatsapp-checkout"
+        type="button">
+
+        Solicitar cotización por WhatsApp
+      </button>
+
+
+      <button
+        id="cancel-order-btn"
+        class="btn btn-cancel-order"
+        type="button">
+
+        Cancelar solicitud
+      </button>
+
+
+      <p id="checkout-message" class="form-message"></p>
+
+    </aside>
+
+  </div>
+
+</main>
+
+
+<script type="module" src="carrito.js"></script>
+
+</body>
+</html>

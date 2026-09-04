@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Jardinero | Cuidamos tus jardines con pasión</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <nav class="navbar">
+
+    <a class="brand" href="#inicio">
+      <img class="brand-mark" src="logo.png" alt="El Jardinero">
+      <span>El Jardinero</span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="nav-links">
+      <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+      <li><a href="#servicios" class="nav-link">Servicios</a></li>
+      <li><a href="#contacto" class="nav-link">Contáctanos</a></li>
+
+      <li>
+        <a href="carrito.html" class="nav-link cart-link">
+          🛒 Cotización
+          <span id="cart-count" class="cart-count">0</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="admin.html" class="nav-link nav-cta">
+          Admin
+        </a>
+      </li>
+    </ul>
+
+  </nav>
+</header>
+
+
+<main>
+
+  <!-- INICIO -->
+
+  <section id="inicio" class="hero">
+
+    <div class="hero-content">
+
+      <p class="eyebrow">Mantenimiento de jardines</p>
+
+      <h1>
+        Cuidamos tus jardines con pasión.
+      </h1>
+
+      <p class="hero-text">
+        En El Jardinero nos encargamos del corte de césped, poda, diseño y
+        mantenimiento integral de tu jardín. Arma tu solicitud de servicios,
+        agenda una visita técnica y recibe tu cotización sin compromiso.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#servicios" class="btn btn-primary">
+          Ver servicios
+        </a>
+
+        <a href="#contacto" class="btn btn-secondary">
+          Contáctanos
+        </a>
+      </div>
+
+    </div>
+
+    <div class="hero-media">
+      <img src="https://placehold.co/700x700/3e7d32/f6f5ef?text=EL+JARDINERO" alt="El Jardinero">
+      <div class="hero-stats">
+        <div>
+          <strong>+10</strong>
+          <span>años de experiencia</span>
+        </div>
+        <div>
+          <strong>12</strong>
+          <span>servicios disponibles</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="wave-divider" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path fill="#e8e4d8" d="M0,32 C240,64 480,0 720,16 C960,32 1200,64 1440,24 L1440,60 L0,60 Z"></path>
+    </svg>
+  </div>
+
+
+  <!-- SERVICIOS -->
+
+  <section id="servicios" class="section section-muted">
+
+    <div class="section-heading">
+      <p class="eyebrow">Nuestros trabajos</p>
+      <h2>Servicios disponibles</h2>
+      <p>Elige los servicios que necesitas, agrégalos a tu solicitud y agenda una visita técnica para cotizar.</p>
+    </div>
+
+
+    <div class="catalog-tools">
+
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="todos">Todos</button>
+        <button class="filter-btn" data-filter="cesped">Césped</button>
+        <button class="filter-btn" data-filter="poda">Poda</button>
+        <button class="filter-btn" data-filter="diseno">Diseño</button>
+        <button class="filter-btn" data-filter="fumigacion-riego">Fumigación y riego</button>
+        <button class="filter-btn" data-filter="mantenimiento">Mantenimiento</button>
+      </div>
+
+      <div class="search-bar">
+        <span>⌕</span>
+        <input id="service-search" type="search" placeholder="Buscar servicio...">
+      </div>
+
+    </div>
+
+
+    <p id="service-empty" class="service-empty hidden">
+      No encontramos servicios con ese criterio.
+    </p>
+
+
+    <!-- LOS SERVICIOS LOS GENERA APP.JS -->
+
+    <div id="service-grid" class="service-grid"></div>
+
+  </section>
+
+
+  <!-- BENEFICIOS -->
+
+  <section class="section">
+
+    <div class="section-heading">
+      <p class="eyebrow">Por qué elegirnos</p>
+      <h2>Jardines saludables, todo el año</h2>
+    </div>
+
+    <div class="benefit-grid">
+
+      <article class="benefit-card">
+        <span class="icon">🌳</span>
+        <h3>Equipo especializado</h3>
+        <p>Jardineros con experiencia en poda, diseño y control de plagas.</p>
+      </article>
+
+      <article class="benefit-card">
+        <span class="icon">🧰</span>
+        <h3>Herramientas propias</h3>
+        <p>Llevamos todo el equipo necesario para cada trabajo.</p>
+      </article>
+
+      <article class="benefit-card">
+        <span class="icon">📅</span>
+        <h3>Visita técnica agendada</h3>
+        <p>Elige fecha y horario para que evaluemos tu jardín antes de cotizar.</p>
+      </article>
+
+      <article class="benefit-card">
+        <span class="icon">📋</span>
+        <h3>Cotización sin compromiso</h3>
+        <p>El precio final se confirma después de ver el trabajo en sitio.</p>
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- CONTACTO -->
+
+  <section id="contacto" class="section section-muted">
+
+    <div class="section-heading">
+      <p class="eyebrow">Hablemos</p>
+      <h2>Contáctanos</h2>
+      <p>¿Tienes dudas sobre algún servicio? Escríbenos y te respondemos pronto.</p>
+    </div>
+
+    <div class="contact-shell">
+
+      <div class="contact-info">
+        <h3>El Jardinero</h3>
+        <p>Cuidamos tus jardines con pasión.</p>
+
+        <div class="contact-detail">
+          <span class="icon">📍</span>
+          <div>
+            <strong>Zona de cobertura</strong>
+            <small>Quito y valles aledaños, Ecuador</small>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <span class="icon">🕒</span>
+          <div>
+            <strong>Horario</strong>
+            <small>Lunes a sábado, 8:00 - 17:00</small>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <span class="icon">📞</span>
+          <div>
+            <strong>WhatsApp</strong>
+            <small>+593 99 000 0000</small>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <span class="icon">✉️</span>
+          <div>
+            <strong>Correo</strong>
+            <small>hola@eljardinero.com</small>
+          </div>
+        </div>
+      </div>
+
+      <form id="contact-form" class="contact-form" novalidate>
+
+        <label for="contact-nombre">Nombre completo</label>
+        <input id="contact-nombre" type="text" required minlength="2" placeholder="Ej. Ana Torres">
+
+        <label for="contact-correo">Correo electrónico</label>
+        <input id="contact-correo" type="email" required placeholder="correo@ejemplo.com">
+
+        <label for="contact-telefono">Teléfono / WhatsApp</label>
+        <input id="contact-telefono" type="tel" required minlength="7" placeholder="0991234567">
+
+        <label for="contact-mensaje">Mensaje</label>
+        <textarea id="contact-mensaje" rows="4" required minlength="5" placeholder="Cuéntanos qué necesitas..."></textarea>
+
+        <button class="btn btn-primary" type="submit">Enviar mensaje</button>
+        <p id="contact-response" class="form-message" role="status" aria-live="polite"></p>
+
+      </form>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer class="site-footer">
+  <p>© 2026 El Jardinero · Todos los derechos reservados</p>
+</footer>
+
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
