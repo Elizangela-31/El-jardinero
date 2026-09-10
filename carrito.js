@@ -25,59 +25,72 @@ const locationText = $("location-text");
 // ================= UBICACIÓN (MAPA) =================
 
 let ubicacionSeleccionada = null; // { lat, lng, direccion }
+let mapaDisponible = false;
 
-const mapa = L.map("location-map").setView([-0.1807, -78.4678], 12); // Quito por defecto
+try {
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "&copy; OpenStreetMap contributors",
-  maxZoom: 19
-}).addTo(mapa);
-
-let marcador = null;
-
-function marcarUbicacion(lat, lng, direccion) {
-  if (marcador) mapa.removeLayer(marcador);
-
-  marcador = L.marker([lat, lng]).addTo(mapa);
-  mapa.setView([lat, lng], 16);
-
-  ubicacionSeleccionada = { lat, lng, direccion: direccion || `${lat.toFixed(5)}, ${lng.toFixed(5)}` };
-
-  locationText.textContent = `📍 ${ubicacionSeleccionada.direccion}`;
-}
-
-mapa.on("click", async (e) => {
-  const { lat, lng } = e.latlng;
-
-  // intenta obtener el nombre de la dirección (reverse geocoding gratuito de OpenStreetMap)
-  try {
-    const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-    const data = await resp.json();
-    marcarUbicacion(lat, lng, data.display_name);
-  } catch {
-    marcarUbicacion(lat, lng, null);
+  if (typeof L === "undefined") {
+    throw new Error("Leaflet no se cargó (revisa tu conexión o bloqueador de anuncios).");
   }
-});
 
-const geocoder = L.Control.Geocoder.nominatim();
+  const mapa = L.map("location-map").setView([-0.1807, -78.4678], 12); // Quito por defecto
 
-$("map-search").addEventListener("keydown", (e) => {
-  if (e.key !== "Enter") return;
-  e.preventDefault();
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+    maxZoom: 19
+  }).addTo(mapa);
 
-  const texto = e.target.value.trim();
-  if (!texto) return;
+  let marcador = null;
 
-  geocoder.geocode(texto, (resultados) => {
-    if (!resultados.length) {
-      alert("No se encontró esa dirección. Intenta ser más específico o marca el punto directamente en el mapa.");
-      return;
+  const marcarUbicacion = (lat, lng, direccion) => {
+    if (marcador) mapa.removeLayer(marcador);
+
+    marcador = L.marker([lat, lng]).addTo(mapa);
+    mapa.setView([lat, lng], 16);
+
+    ubicacionSeleccionada = { lat, lng, direccion: direccion || `${lat.toFixed(5)}, ${lng.toFixed(5)}` };
+
+    locationText.textContent = `📍 ${ubicacionSeleccionada.direccion}`;
+  };
+
+  mapa.on("click", async (e) => {
+    const { lat, lng } = e.latlng;
+
+    try {
+      const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const data = await resp.json();
+      marcarUbicacion(lat, lng, data.display_name);
+    } catch {
+      marcarUbicacion(lat, lng, null);
     }
-
-    const mejor = resultados[0];
-    marcarUbicacion(mejor.center.lat, mejor.center.lng, mejor.name);
   });
-});
+
+  const geocoder = L.Control.Geocoder.nominatim();
+
+  $("map-search").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+
+    const texto = e.target.value.trim();
+    if (!texto) return;
+
+    geocoder.geocode(texto, (resultados) => {
+      if (!resultados.length) {
+        alert("No se encontró esa dirección. Intenta ser más específico o marca el punto directamente en el mapa.");
+        return;
+      }
+
+      const mejor = resultados[0];
+      marcarUbicacion(mejor.center.lat, mejor.center.lng, mejor.name);
+    });
+  });
+
+  mapaDisponible = true;
+
+} catch (error) {
+  console.error("No se pudo cargar el mapa:", error);
+  locationText.textContent = "⚠️ El mapa no se pudo cargar. Escribe tu dirección igual, la anotaremos manualmente.";
+}
 
 
 // ================= CARRITO =================
@@ -346,7 +359,7 @@ confirmar.onclick = async () => {
   }
 
 
-  if (!ubicacionSeleccionada) {
+  if (mapaDisponible && !ubicacionSeleccionada) {
 
     mensaje.textContent =
       "Marca la ubicación de tu jardín en el mapa.";
@@ -408,7 +421,9 @@ Método de pago: ${item.metodoPago}
     `).join("\n");
 
 
-    const mapsLink = `https://www.google.com/maps?q=${ubicacionSeleccionada.lat},${ubicacionSeleccionada.lng}`;
+    const mapsLink = ubicacionSeleccionada
+      ? `https://www.google.com/maps?q=${ubicacionSeleccionada.lat},${ubicacionSeleccionada.lng}`
+      : "no especificada";
 
     const texto = `
 Hola El Jardinero.
@@ -419,7 +434,7 @@ Quiero solicitar una cotización para:
 
 ${detalle}
 
-Ubicación del jardín: ${ubicacionSeleccionada.direccion}
+Ubicación del jardín: ${ubicacionSeleccionada ? ubicacionSeleccionada.direccion : "no especificada"}
 Ver en el mapa: ${mapsLink}
 
 Teléfono: ${telefono}
