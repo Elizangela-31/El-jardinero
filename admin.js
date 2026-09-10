@@ -74,20 +74,22 @@ function createSolicitudCard(id, data) {
   interes.textContent = data.interes;
   card.appendChild(interes);
 
-  const direccion = document.createElement("p");
-  direccion.className = "solicitud-meta";
-  direccion.textContent = `Dirección: ${data.direccion || "-"}`;
-  card.appendChild(direccion);
-
-  const pago = document.createElement("p");
-  pago.className = "solicitud-meta";
-  pago.textContent = `Pago: ${data.metodoPago || "-"} · Total estimado: ${money(data.totalEstimado)}`;
-  card.appendChild(pago);
-
   const contacto = document.createElement("p");
   contacto.className = "solicitud-meta";
   contacto.textContent = `${data.correo} · ${data.telefono}`;
   card.appendChild(contacto);
+
+  const total = document.createElement("p");
+  total.className = "solicitud-meta";
+  total.textContent = `Total estimado: ${money(data.totalEstimado)}`;
+  card.appendChild(total);
+
+  (data.servicios || []).forEach((servicio) => {
+    const detalle = document.createElement("p");
+    detalle.className = "solicitud-meta";
+    detalle.textContent = `${servicio.nombre} — ${servicio.ubicacion || "sin ubicación"} · ${servicio.metodoPago || "sin método de pago"}`;
+    card.appendChild(detalle);
+  });
 
   const fecha = document.createElement("p");
   fecha.className = "solicitud-fecha";

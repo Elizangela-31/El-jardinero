@@ -14,14 +14,70 @@ const $ = id => document.getElementById(id);
 
 const items = $("cart-items");
 const empty = $("cart-empty");
-const totalHTML = $("cart-total");
 const sumCount = $("sum-count");
 const form = $("checkout-form");
 const mensaje = $("checkout-message");
 const confirmar = $("checkout-btn");
 const cancelar = $("cancel-order-btn");
-const metodoPagoSelect = $("metodo-pago");
-const paymentPanel = $("payment-panel");
+const locationText = $("location-text");
+
+
+// ================= UBICACIÓN (MAPA) =================
+
+let ubicacionSeleccionada = null; // { lat, lng, direccion }
+
+const mapa = L.map("location-map").setView([-0.1807, -78.4678], 12); // Quito por defecto
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "&copy; OpenStreetMap contributors",
+  maxZoom: 19
+}).addTo(mapa);
+
+let marcador = null;
+
+function marcarUbicacion(lat, lng, direccion) {
+  if (marcador) mapa.removeLayer(marcador);
+
+  marcador = L.marker([lat, lng]).addTo(mapa);
+  mapa.setView([lat, lng], 16);
+
+  ubicacionSeleccionada = { lat, lng, direccion: direccion || `${lat.toFixed(5)}, ${lng.toFixed(5)}` };
+
+  locationText.textContent = `📍 ${ubicacionSeleccionada.direccion}`;
+}
+
+mapa.on("click", async (e) => {
+  const { lat, lng } = e.latlng;
+
+  // intenta obtener el nombre de la dirección (reverse geocoding gratuito de OpenStreetMap)
+  try {
+    const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data = await resp.json();
+    marcarUbicacion(lat, lng, data.display_name);
+  } catch {
+    marcarUbicacion(lat, lng, null);
+  }
+});
+
+const geocoder = L.Control.Geocoder.nominatim();
+
+$("map-search").addEventListener("keydown", (e) => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+
+  const texto = e.target.value.trim();
+  if (!texto) return;
+
+  geocoder.geocode(texto, (resultados) => {
+    if (!resultados.length) {
+      alert("No se encontró esa dirección. Intenta ser más específico o marca el punto directamente en el mapa.");
+      return;
+    }
+
+    const mejor = resultados[0];
+    marcarUbicacion(mejor.center.lat, mejor.center.lng, mejor.name);
+  });
+});
 
 
 // ================= CARRITO =================
@@ -33,8 +89,6 @@ function saveCart(cart) {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
   render();
 }
-
-const money = n => `$${Number(n || 0).toFixed(2)}`;
 
 function fechaBonita(fecha) {
   if (!fecha) return "Por seleccionar";
@@ -62,8 +116,37 @@ function actualizar(index, campo, valor) {
 
   if (campo === "fecha") item.fecha = valor;
   if (campo === "hora") item.hora = valor;
+  if (campo === "metodoPago") item.metodoPago = valor;
 
   saveCart(cart);
+}
+
+
+// ================= PANEL DE MÉTODO DE PAGO (POR ITEM) =================
+
+function paymentPanelHTML(metodo) {
+  if (metodo === "efectivo") {
+    return `
+      <div class="payment-panel">
+        <h4>💵 Pago en efectivo</h4>
+        <p>Pagas directamente al equipo el día del trabajo, una vez confirmado el precio final.</p>
+      </div>
+    `;
+  }
+
+  if (metodo === "transferencia") {
+    return `
+      <div class="payment-panel">
+        <h4>🏦 Transferencia bancaria</h4>
+        <div class="payment-line"><span>Banco</span><strong>Banco Pichincha</strong></div>
+        <div class="payment-line"><span>Cuenta de ahorros</span><strong>N.º 2200XXXXXX</strong></div>
+        <div class="payment-line"><span>A nombre de</span><strong>El Jardinero</strong></div>
+        <small>Envía el comprobante por WhatsApp una vez confirmada la cotización.</small>
+      </div>
+    `;
+  }
+
+  return "";
 }
 
 
@@ -95,7 +178,7 @@ function render() {
 
             <h3>${item.nombre}</h3>
 
-            <p>${item.descripcion || ""} · ${item.duracion || ""}</p>
+            <p>${item.descripcion || ""}</p>
           </div>
 
           <button
@@ -143,14 +226,25 @@ function render() {
         </div>
 
 
+        <label class="cart-edit-field" style="margin-bottom:16px;">
+          <span>Método de pago</span>
+
+          <select
+            class="cart-payment"
+            data-index="${index}">
+
+            <option value="" ${!item.metodoPago ? "selected" : ""}>Seleccione</option>
+            <option value="efectivo" ${item.metodoPago === "efectivo" ? "selected" : ""}>Efectivo</option>
+            <option value="transferencia" ${item.metodoPago === "transferencia" ? "selected" : ""}>Transferencia bancaria</option>
+          </select>
+        </label>
+
+
+        ${paymentPanelHTML(item.metodoPago)}
+
+
         <div class="item-schedule-box">
           📅 ${fechaBonita(item.fecha)} · 🕒 ${item.hora ? item.hora : "Por seleccionar"}
-        </div>
-
-
-        <div class="item-total">
-          <span>Precio referencial</span>
-          <strong>Desde ${money(item.precio)}</strong>
         </div>
 
       </article>
@@ -161,7 +255,7 @@ function render() {
 
 
   eventos();
-  totales(cart);
+  sumCount.textContent = cart.length;
 }
 
 
@@ -181,6 +275,12 @@ function eventos() {
   );
 
 
+  document.querySelectorAll(".cart-payment").forEach(select =>
+    select.onchange = () =>
+      actualizar(+select.dataset.index, "metodoPago", select.value)
+  );
+
+
   document.querySelectorAll(".cart-remove").forEach(btn => {
 
     btn.onclick = () => {
@@ -195,71 +295,6 @@ function eventos() {
   });
 
 }
-
-
-// ================= TOTALES =================
-
-function totales(cart) {
-
-  const total = cart.reduce((s, item) => s + Number(item.precio || 0), 0);
-
-  sumCount.textContent = cart.length;
-  totalHTML.textContent = `Desde ${money(total)}`;
-}
-
-
-// ================= PANEL DE MÉTODO DE PAGO =================
-
-function renderPaymentPanel(metodo) {
-
-  if (!metodo) {
-    paymentPanel.classList.add("hidden");
-    paymentPanel.innerHTML = "";
-    return;
-  }
-
-  paymentPanel.classList.remove("hidden");
-
-  if (metodo === "efectivo") {
-    paymentPanel.innerHTML = `
-      <h4>💵 Pago en efectivo</h4>
-      <p>Pagas directamente al equipo el día del trabajo, una vez confirmado el precio final.</p>
-      <small>No se requiere ningún dato adicional.</small>
-    `;
-    return;
-  }
-
-  if (metodo === "transferencia") {
-    paymentPanel.innerHTML = `
-      <h4>🏦 Transferencia bancaria</h4>
-      <div class="payment-line"><span>Banco</span><strong>Banco Pichincha</strong></div>
-      <div class="payment-line"><span>Cuenta de ahorros</span><strong>N.º 2200XXXXXX</strong></div>
-      <div class="payment-line"><span>A nombre de</span><strong>El Jardinero</strong></div>
-      <div class="payment-line"><span>RUC</span><strong>1792XXXXXX001</strong></div>
-      <small>Envía el comprobante por WhatsApp una vez confirmada la cotización.</small>
-    `;
-    return;
-  }
-
-  if (metodo === "tarjeta") {
-    paymentPanel.innerHTML = `
-      <h4>💳 Pago con tarjeta</h4>
-      <p>Ingresa los datos de tu tarjeta para procesar el pago (simulado).</p>
-      <div class="card-mock-grid">
-        <input class="full" type="text" placeholder="Número de tarjeta" maxlength="19">
-        <input type="text" placeholder="MM/AA" maxlength="5">
-        <input type="text" placeholder="CVV" maxlength="3">
-      </div>
-      <small>Este es un formulario de demostración: no procesa pagos reales.
-        Para cobros reales integra una pasarela como Stripe o PayPal.</small>
-    `;
-    return;
-  }
-}
-
-metodoPagoSelect.addEventListener("change", () => {
-  renderPaymentPanel(metodoPagoSelect.value);
-});
 
 
 // ================= CANCELAR =================
@@ -302,6 +337,24 @@ confirmar.onclick = async () => {
   }
 
 
+  if (cart.some(item => !item.metodoPago)) {
+
+    mensaje.textContent =
+      "Selecciona el método de pago para todos los servicios.";
+
+    return;
+  }
+
+
+  if (!ubicacionSeleccionada) {
+
+    mensaje.textContent =
+      "Marca la ubicación de tu jardín en el mapa.";
+
+    return;
+  }
+
+
   if (!form.checkValidity()) {
 
     mensaje.textContent =
@@ -316,11 +369,6 @@ confirmar.onclick = async () => {
   const nombre = $("nombre").value.trim();
   const correo = $("correo").value.trim();
   const telefono = $("telefono").value.trim();
-  const direccion = $("direccion").value.trim();
-  const metodoPago = metodoPagoSelect.value;
-
-  const totalEstimado =
-    cart.reduce((s, item) => s + Number(item.precio || 0), 0);
 
 
   confirmar.disabled = true;
@@ -335,14 +383,12 @@ confirmar.onclick = async () => {
         nombre,
         correo,
         telefono,
-        direccion,
-        metodoPago,
+        ubicacion: ubicacionSeleccionada,
 
         interes:
           cart.map(i => i.nombre).join(", "),
 
         servicios: cart,
-        totalEstimado,
         estado: "pendiente",
         origen: "carrito",
 
@@ -357,10 +403,12 @@ confirmar.onclick = async () => {
 ${i + 1}. ${item.nombre}
 Fecha de visita: ${fechaBonita(item.fecha)}
 Hora: ${item.hora}
-Precio referencial: ${money(item.precio)}
+Método de pago: ${item.metodoPago}
 
     `).join("\n");
 
+
+    const mapsLink = `https://www.google.com/maps?q=${ubicacionSeleccionada.lat},${ubicacionSeleccionada.lng}`;
 
     const texto = `
 Hola El Jardinero.
@@ -371,10 +419,8 @@ Quiero solicitar una cotización para:
 
 ${detalle}
 
-Dirección: ${direccion}
-Método de pago preferido: ${metodoPago}
-
-TOTAL ESTIMADO: ${money(totalEstimado)}
+Ubicación del jardín: ${ubicacionSeleccionada.direccion}
+Ver en el mapa: ${mapsLink}
 
 Teléfono: ${telefono}
 Correo: ${correo}

@@ -58,12 +58,17 @@ export const servicios = [
     imagen: "https://placehold.co/700x520/d9ead0/16321f?text=Fertilizacion",
     descripcion: "Nutrición del suelo para un césped y plantas más saludables."
   },
- 
+  {
+    id: "riego-aspersion",
+    nombre: "Instalación de riego por aspersión",
+    categoria: "fumigacion-riego",
+    imagen: "https://placehold.co/700x520/3e7d32/f6f5ef?text=Riego+por+Aspersion",
+    descripcion: "Diseño e instalación de sistemas de riego automático."
+  },
   {
     id: "limpieza-jardin",
     nombre: "Limpieza y desmalezado general",
     categoria: "mantenimiento",
-
     imagen: "https://placehold.co/700x520/6f4518/f6f5ef?text=Limpieza+de+Jardin",
     descripcion: "Retiro de maleza, hojas y residuos para dejar el jardín limpio."
   },
@@ -125,10 +130,9 @@ function addToCart(servicio) {
     nombre: servicio.nombre,
     descripcion: servicio.descripcion,
     categoria: servicio.categoria,
-    duracion: servicio.duracion,
-    precio: servicio.precio,
     fecha: "",
     hora: "",
+    ubicacion: "",
     metodoPago: ""
   });
 
@@ -152,7 +156,6 @@ function showServices(lista = servicios) {
 
       <div class="service-media">
         <img src="${s.imagen}" alt="${s.nombre}">
-        <span class="badge badge-duration">${s.duracion}</span>
         <span class="badge badge-category">${s.categoria.replace("-", " y ")}</span>
       </div>
 
@@ -161,11 +164,6 @@ function showServices(lista = servicios) {
         <p>${s.descripcion}</p>
 
         <div class="service-footer">
-          <div class="price">
-            <span class="price-label">Desde</span>
-            <strong>$${s.precio}</strong>
-          </div>
-
           <div class="service-actions">
             <button class="btn btn-primary btn-small add-btn" data-id="${s.id}">
               Agregar
