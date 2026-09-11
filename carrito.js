@@ -21,6 +21,11 @@ const confirmar = $("checkout-btn");
 const cancelar = $("cancel-order-btn");
 const locationText = $("location-text");
 
+const citaFechaInput = $("cita-fecha");
+const citaHoraSelect = $("cita-hora");
+const citaPagoSelect = $("cita-pago");
+const paymentPanelBox = $("payment-panel-box");
+
 
 // ================= UBICACIÓN (MAPA) =================
 
@@ -93,15 +98,13 @@ try {
 }
 
 
-// ================= CARRITO =================
+// ================= FECHA MÍNIMA =================
 
-const getCart = () =>
-  JSON.parse(localStorage.getItem(CART_KEY)) || [];
-
-function saveCart(cart) {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  render();
+function hoy() {
+  return new Date().toISOString().split("T")[0];
 }
+
+if (citaFechaInput) citaFechaInput.min = hoy();
 
 function fechaBonita(fecha) {
   if (!fecha) return "Por seleccionar";
@@ -114,35 +117,26 @@ function fechaBonita(fecha) {
     });
 }
 
-function hoy() {
-  return new Date().toISOString().split("T")[0];
+
+// ================= CARRITO =================
+
+const getCart = () =>
+  JSON.parse(localStorage.getItem(CART_KEY)) || [];
+
+function saveCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  render();
 }
 
 
-// ================= ACTUALIZAR ITEM =================
-
-function actualizar(index, campo, valor) {
-  const cart = getCart();
-  const item = cart[index];
-
-  if (!item) return;
-
-  if (campo === "fecha") item.fecha = valor;
-  if (campo === "hora") item.hora = valor;
-  if (campo === "metodoPago") item.metodoPago = valor;
-
-  saveCart(cart);
-}
-
-
-// ================= PANEL DE MÉTODO DE PAGO (POR ITEM) =================
+// ================= PANEL DE MÉTODO DE PAGO (ÚNICO PARA TODA LA SOLICITUD) =================
 
 function paymentPanelHTML(metodo) {
   if (metodo === "efectivo") {
     return `
       <div class="payment-panel">
         <h4>💵 Pago en efectivo</h4>
-        <p>Pagas directamente al equipo el día del trabajo, una vez confirmado el precio final.</p>
+        <p>Pagas directamente al equipo el día de la visita, una vez confirmado el precio final.</p>
       </div>
     `;
   }
@@ -160,6 +154,14 @@ function paymentPanelHTML(metodo) {
   }
 
   return "";
+}
+
+function actualizarPanelPago() {
+  paymentPanelBox.innerHTML = paymentPanelHTML(citaPagoSelect.value);
+}
+
+if (citaPagoSelect) {
+  citaPagoSelect.addEventListener("change", actualizarPanelPago);
 }
 
 
@@ -202,64 +204,6 @@ function render() {
 
         </div>
 
-
-        <div class="cart-edit-grid">
-
-          <label class="cart-edit-field">
-            <span>Fecha de visita</span>
-
-            <input
-              class="cart-date"
-              data-index="${index}"
-              type="date"
-              min="${hoy()}"
-              value="${item.fecha || ""}">
-          </label>
-
-
-          <label class="cart-edit-field">
-            <span>Horario</span>
-
-            <select
-              class="cart-time"
-              data-index="${index}">
-
-              <option value="" ${!item.hora ? "selected" : ""}>Seleccione</option>
-              <option value="08:00" ${item.hora === "08:00" ? "selected" : ""}>08:00 AM</option>
-              <option value="09:00" ${item.hora === "09:00" ? "selected" : ""}>09:00 AM</option>
-              <option value="10:00" ${item.hora === "10:00" ? "selected" : ""}>10:00 AM</option>
-              <option value="11:00" ${item.hora === "11:00" ? "selected" : ""}>11:00 AM</option>
-              <option value="13:00" ${item.hora === "13:00" ? "selected" : ""}>01:00 PM</option>
-              <option value="14:00" ${item.hora === "14:00" ? "selected" : ""}>02:00 PM</option>
-              <option value="15:00" ${item.hora === "15:00" ? "selected" : ""}>03:00 PM</option>
-              <option value="16:00" ${item.hora === "16:00" ? "selected" : ""}>04:00 PM</option>
-            </select>
-          </label>
-
-        </div>
-
-
-        <label class="cart-edit-field" style="margin-bottom:16px;">
-          <span>Método de pago</span>
-
-          <select
-            class="cart-payment"
-            data-index="${index}">
-
-            <option value="" ${!item.metodoPago ? "selected" : ""}>Seleccione</option>
-            <option value="efectivo" ${item.metodoPago === "efectivo" ? "selected" : ""}>Efectivo</option>
-            <option value="transferencia" ${item.metodoPago === "transferencia" ? "selected" : ""}>Transferencia bancaria</option>
-          </select>
-        </label>
-
-
-        ${paymentPanelHTML(item.metodoPago)}
-
-
-        <div class="item-schedule-box">
-          📅 ${fechaBonita(item.fecha)} · 🕒 ${item.hora ? item.hora : "Por seleccionar"}
-        </div>
-
       </article>
 
     `;
@@ -275,24 +219,6 @@ function render() {
 // ================= EVENTOS =================
 
 function eventos() {
-
-  document.querySelectorAll(".cart-date").forEach(input =>
-    input.onchange = () =>
-      actualizar(+input.dataset.index, "fecha", input.value)
-  );
-
-
-  document.querySelectorAll(".cart-time").forEach(select =>
-    select.onchange = () =>
-      actualizar(+select.dataset.index, "hora", select.value)
-  );
-
-
-  document.querySelectorAll(".cart-payment").forEach(select =>
-    select.onchange = () =>
-      actualizar(+select.dataset.index, "metodoPago", select.value)
-  );
-
 
   document.querySelectorAll(".cart-remove").forEach(btn => {
 
@@ -341,19 +267,24 @@ confirmar.onclick = async () => {
   }
 
 
-  if (cart.some(item => !item.fecha || !item.hora)) {
+  const fecha = citaFechaInput.value;
+  const hora = citaHoraSelect.value;
+  const metodoPago = citaPagoSelect.value;
+
+
+  if (!fecha || !hora) {
 
     mensaje.textContent =
-      "Selecciona fecha y horario de visita para todos los servicios.";
+      "Selecciona la fecha y el horario de la visita.";
 
     return;
   }
 
 
-  if (cart.some(item => !item.metodoPago)) {
+  if (!metodoPago) {
 
     mensaje.textContent =
-      "Selecciona el método de pago para todos los servicios.";
+      "Selecciona el método de pago.";
 
     return;
   }
@@ -402,6 +333,11 @@ confirmar.onclick = async () => {
           cart.map(i => i.nombre).join(", "),
 
         servicios: cart,
+
+        fecha,
+        hora,
+        metodoPago,
+
         estado: "pendiente",
         origen: "carrito",
 
@@ -411,14 +347,7 @@ confirmar.onclick = async () => {
     );
 
 
-    const detalle = cart.map((item, i) => `
-
-${i + 1}. ${item.nombre}
-Fecha de visita: ${fechaBonita(item.fecha)}
-Hora: ${item.hora}
-Método de pago: ${item.metodoPago}
-
-    `).join("\n");
+    const detalle = cart.map((item, i) => `${i + 1}. ${item.nombre}`).join("\n");
 
 
     const mapsLink = ubicacionSeleccionada
@@ -433,6 +362,10 @@ Soy ${nombre}.
 Quiero solicitar una cotización para:
 
 ${detalle}
+
+Fecha de visita: ${fechaBonita(fecha)}
+Hora: ${hora}
+Método de pago: ${metodoPago}
 
 Ubicación del jardín: ${ubicacionSeleccionada ? ubicacionSeleccionada.direccion : "no especificada"}
 Ver en el mapa: ${mapsLink}

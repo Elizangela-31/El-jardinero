@@ -252,13 +252,10 @@ h1, h2, h3, h4 {
 
 .hero {
   position: relative;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
-  gap: 40px;
-  max-width: 1180px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 70px 24px 100px;
+  padding: 70px 24px 60px;
+  text-align: center;
 }
 
 .hero-content .eyebrow {
@@ -270,55 +267,7 @@ h1, h2, h3, h4 {
   margin-bottom: 18px;
 }
 
-.hero-text {
-  color: var(--gris);
-  font-size: 17px;
-  max-width: 460px;
-  margin-bottom: 30px;
-}
 
-.hero-actions {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.hero-media {
-  position: relative;
-  border-radius: 28px;
-  overflow: hidden;
-  aspect-ratio: 1 / 1;
-  box-shadow: var(--sombra);
-}
-
-.hero-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero-stats {
-  position: absolute;
-  bottom: -18px;
-  left: -18px;
-  background: var(--blanco);
-  padding: 16px 20px;
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-  display: flex;
-  gap: 22px;
-}
-
-.hero-stats div strong {
-  display: block;
-  font-family: var(--fuente-display);
-  font-size: 22px;
-  color: var(--verde-oscuro);
-}
-.hero-stats div span {
-  font-size: 12px;
-  color: var(--gris);
-}
 
 .wave-divider {
   display: block;
@@ -926,23 +875,12 @@ h1, h2, h3, h4 {
 }
 
 /* ================= RESPONSIVE ================= */
-
 @media (max-width: 900px) {
   .hero {
-    grid-template-columns: 1fr;
     padding-top: 40px;
   }
-  .hero-media {
-    order: -1;
-    max-width: 340px;
-    margin: 0 auto;
-  }
   .contact-shell {
-    grid-template-columns: 1fr;
-  }
-  .checkout-shell {
-    grid-template-columns: 1fr;
-  }
+  
   .order-summary-panel {
     position: static;
   }
@@ -986,5 +924,144 @@ h1, h2, h3, h4 {
   }
   .search-bar input {
     width: 100%;
+  }
+}
+
+/* ---- Ubicación / mapa (carrito) ---- */
+
+.order-summary-panel h3:not(:first-child) {
+  margin-top: 22px;
+}
+
+.location-search {
+  margin-bottom: 10px;
+}
+.location-search input {
+  width: 100%;
+}
+
+.location-map {
+  width: 100%;
+  height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--borde);
+  margin-bottom: 10px;
+  z-index: 0;
+}
+
+.location-text {
+  font-size: 13px;
+  color: var(--gris);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+#checkout-btn,
+#cancel-order-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+#checkout-btn:disabled,
+#cancel-order-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* ================= GALERÍA (CARRUSEL AUTOMÁTICO) ================= */
+
+.gallery-carousel {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: var(--sombra);
+  background: var(--verde-oscuro);
+}
+
+.gallery-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.gallery-slide.active {
+  opacity: 1;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--verde-oscuro);
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s ease;
+}
+.gallery-arrow:hover {
+  background: var(--blanco);
+}
+.gallery-prev {
+  left: 14px;
+}
+.gallery-next {
+  right: 14px;
+}
+
+.gallery-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gallery-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease;
+}
+.gallery-dot.active {
+  background: var(--blanco);
+  transform: scale(1.3);
+}
+
+@media (max-width: 600px) {
+  .gallery-carousel {
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+  }
+  .gallery-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
   }
 }

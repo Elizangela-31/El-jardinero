@@ -43,3 +43,139 @@
   <div class="section-heading checkout-heading">
     <p class="eyebrow">Resumen de tu solicitud</p>
     <h2>🛒 Solicitud de cotización</h2>
+  </div>
+
+
+  <p id="cart-empty" class="cart-empty hidden">
+    Todavía no has agregado servicios a tu solicitud.
+    <br>
+    <a href="index.html#servicios">Ver servicios disponibles →</a>
+  </p>
+
+
+  <form id="checkout-form" novalidate>
+
+    <div class="checkout-shell">
+
+      <!-- ================= SERVICIOS AGREGADOS (los pinta carrito.js) ================= -->
+      <div id="cart-items" class="checkout-items"></div>
+
+
+      <!-- ================= DATOS DEL CLIENTE + CITA ÚNICA + PAGO + UBICACIÓN ================= -->
+      <aside class="order-summary-panel">
+
+        <h3>👤 Tus datos de contacto</h3>
+
+        <label for="nombre">Nombre completo</label>
+        <input id="nombre" type="text" required minlength="2" placeholder="Ej. Ana Torres">
+
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" type="email" required placeholder="correo@ejemplo.com">
+
+        <label for="telefono">Teléfono / WhatsApp</label>
+        <input id="telefono" type="tel" required minlength="7" placeholder="0991234567">
+
+
+        <h3 style="margin-top:24px;">📅 Cita de visita</h3>
+        <p class="cart-note" style="margin-top:0;margin-bottom:10px;">
+          Una sola fecha y horario para revisar todos los servicios que agregaste.
+        </p>
+
+        <div class="cart-edit-grid">
+
+          <label class="cart-edit-field">
+            <span>Fecha de visita</span>
+            <input id="cita-fecha" type="date">
+          </label>
+
+          <label class="cart-edit-field">
+            <span>Horario</span>
+            <select id="cita-hora">
+              <option value="">Seleccione</option>
+              <option value="08:00">08:00 AM</option>
+              <option value="09:00">09:00 AM</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="13:00">01:00 PM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="15:00">03:00 PM</option>
+              <option value="16:00">04:00 PM</option>
+            </select>
+          </label>
+
+        </div>
+
+
+        <h3 style="margin-top:24px;">💳 Método de pago</h3>
+
+        <label class="cart-edit-field" style="margin-bottom:6px;">
+          <span>Selecciona una opción</span>
+          <select id="cita-pago">
+            <option value="">Seleccione</option>
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia bancaria</option>
+          </select>
+        </label>
+
+        <div id="payment-panel-box"></div>
+
+
+        <h3 style="margin-top:24px;">📍 Ubicación del jardín</h3>
+
+        <div class="search-bar location-search">
+          <span>⌕</span>
+          <input id="map-search" type="text" placeholder="Busca tu dirección y presiona Enter">
+        </div>
+
+        <div id="location-map" class="location-map"></div>
+
+        <p id="location-text" class="location-text">
+          Busca tu dirección o marca directamente el punto en el mapa.
+        </p>
+
+
+        <div class="summary-lines">
+          <div>
+            <span>Servicios seleccionados</span>
+            <strong id="sum-count">0</strong>
+          </div>
+        </div>
+
+        <p class="cart-note">
+          💬 <strong>Sobre el pago:</strong> el precio final se define durante la visita técnica.
+          Nuestro equipo revisará todos los servicios seleccionados en esa misma cita y ahí te
+          confirmaremos el monto exacto a pagar, según el método de pago que elegiste.
+        </p>
+
+
+        <button type="button" id="checkout-btn" class="btn btn-primary btn-whatsapp-checkout">
+          Solicitar cotización por WhatsApp
+        </button>
+
+        <button type="button" id="cancel-order-btn" class="btn btn-outline">
+          Vaciar solicitud
+        </button>
+
+        <p id="checkout-message" class="form-message" role="status" aria-live="polite"></p>
+
+      </aside>
+
+    </div>
+
+  </form>
+
+</main>
+
+
+<footer class="site-footer">
+  <p>© 2026 El Jardinero · Todos los derechos reservados</p>
+</footer>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<script type="module" src="carrito.js"></script>
+
+</body>
+</html>
