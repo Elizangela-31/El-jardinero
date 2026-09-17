@@ -979,18 +979,21 @@ h1, h2, h3, h4 {
   grid-template-columns: 1fr 1fr;
   gap: 34px;
   align-items: start;
-  max-width: 1180px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
 .gallery-column-title {
   margin-bottom: 14px;
   font-size: 18px;
+  text-align: center;
 }
 
 .gallery-carousel {
   position: relative;
   width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
   aspect-ratio: 4 / 3;
   border-radius: var(--radio);
   overflow: hidden;
@@ -1025,10 +1028,10 @@ h1, h2, h3, h4 {
   background: rgba(255, 255, 255, 0.85);
   color: var(--verde-oscuro);
   border: none;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1;
   cursor: pointer;
   display: flex;
@@ -1040,15 +1043,15 @@ h1, h2, h3, h4 {
   background: var(--blanco);
 }
 .gallery-prev {
-  left: 14px;
+  left: 12px;
 }
 .gallery-next {
-  right: 14px;
+  right: 12px;
 }
 
 .gallery-dots {
   position: absolute;
-  bottom: 14px;
+  bottom: 12px;
   left: 0;
   right: 0;
   display: flex;
@@ -1057,8 +1060,8 @@ h1, h2, h3, h4 {
 }
 
 .gallery-dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   border: none;
   padding: 0;
@@ -1073,22 +1076,24 @@ h1, h2, h3, h4 {
 
 @media (max-width: 600px) {
   .gallery-carousel {
-    aspect-ratio: 4 / 3;
+    max-width: 320px;
     border-radius: 18px;
   }
   .gallery-arrow {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
   }
 }
 
-/* ---- Videos ---- */
+/* ---- Videos: misma proporción y tamaño que las fotos ---- */
 
 .video-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
+  max-width: 380px;
+  margin: 0 auto;
 }
 
 .video-item {
@@ -1101,17 +1106,12 @@ h1, h2, h3, h4 {
 }
 
 .video-item.video-vertical {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
 }
 
 @media (max-width: 900px) {
   .gallery-shell {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 500px) {
-  .video-grid {
-    grid-template-columns: 1fr;
+    max-width: 380px;
   }
 }
